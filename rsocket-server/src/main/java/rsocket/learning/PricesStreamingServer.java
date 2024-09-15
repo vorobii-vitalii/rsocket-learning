@@ -9,6 +9,7 @@ import io.rsocket.frame.decoder.PayloadDecoder;
 import io.rsocket.transport.netty.server.TcpServerTransport;
 import reactor.core.publisher.Mono;
 import rsocket.learning.prices.impl.DemoPricesProvider;
+import rsocket.learning.prices.impl.StockPriceReaderImpl;
 import rsocket.learning.serialization.json.JsonPayloadDataDeserializer;
 import rsocket.learning.serialization.json.JsonPayloadDataSerializer;
 import rsocket.learning.socket.PricesStreamingRSocket;
@@ -26,7 +27,8 @@ public class PricesStreamingServer {
 		var deserializer = new JsonPayloadDataDeserializer(gson);
 
 		var pricesStream = pricesProvider.subscribeToPrices().share();
-		RSocketServer.create((payload, socket) -> Mono.just(new PricesStreamingRSocket(deserializer, serializer, pricesStream)))
+		RSocketServer.create((payload, socket) -> Mono.just(
+						new PricesStreamingRSocket(deserializer, serializer, new StockPriceReaderImpl(pricesStream))))
 				.payloadDecoder(PayloadDecoder.ZERO_COPY)
 				.bind(TcpServerTransport.create(SERVER_PORT))
 				.block()

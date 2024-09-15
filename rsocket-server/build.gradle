@@ -31,6 +31,8 @@ dependencies {
     // Json lib
     implementation 'com.google.code.gson:gson:2.11.0'
 
+    // Unit tests
+    testImplementation 'org.assertj:assertj-core:3.26.3'
 
 }
 

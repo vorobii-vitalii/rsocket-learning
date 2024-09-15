@@ -14,7 +14,7 @@ import rsocket.learning.serialization.PayloadDataSerializer;
 
 @Slf4j
 @RequiredArgsConstructor
-public class PricesStreamingRSocketImpl implements RSocket {
+public class PricesStreamingRSocket implements RSocket {
 	private final PayloadDataDeserializer payloadDataDeserializer;
 	private final PayloadDataSerializer payloadDataSerializer;
 	private final Flux<PriceData> pricesStream;

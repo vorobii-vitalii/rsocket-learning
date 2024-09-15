@@ -1,9 +1,7 @@
 package rsocket.learning;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import io.rsocket.core.RSocketServer;
@@ -13,7 +11,7 @@ import reactor.core.publisher.Mono;
 import rsocket.learning.prices.impl.DemoPricesProvider;
 import rsocket.learning.serialization.json.JsonPayloadDataDeserializer;
 import rsocket.learning.serialization.json.JsonPayloadDataSerializer;
-import rsocket.learning.socket.PricesStreamingRSocketImpl;
+import rsocket.learning.socket.PricesStreamingRSocket;
 import rsocket.learning.utils.LocalDateTimeTypeAdapter;
 
 public class PricesStreamingServer {
@@ -28,7 +26,7 @@ public class PricesStreamingServer {
 		var deserializer = new JsonPayloadDataDeserializer(gson);
 
 		var pricesStream = pricesProvider.subscribeToPrices().share();
-		RSocketServer.create((payload, socket) -> Mono.just(new PricesStreamingRSocketImpl(deserializer, serializer, pricesStream)))
+		RSocketServer.create((payload, socket) -> Mono.just(new PricesStreamingRSocket(deserializer, serializer, pricesStream)))
 				.payloadDecoder(PayloadDecoder.ZERO_COPY)
 				.bind(TcpServerTransport.create(SERVER_PORT))
 				.block()

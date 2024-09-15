@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+}
+
+group = 'rsocket.learning'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    implementation 'io.rsocket:rsocket-core:1.1.4'
+    implementation 'io.rsocket:rsocket-transport-netty:1.1.4'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.34'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    // Logging
+    implementation 'org.slf4j:slf4j-api:2.1.0-alpha1'
+    implementation 'ch.qos.logback:logback-classic:1.5.8'
+
+    // Json lib
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,3 +1,4 @@
 rootProject.name = 'rsocket-learning'
 include 'rsocket-server'
+include 'prices-publisher-simulator'
 

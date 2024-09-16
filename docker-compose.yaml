@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-rc-management
+    restart: unless-stopped
+    network_mode: "host"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "5552:5552"
+    environment:
+      RABBITMQ_DEFAULT_USER: "rabbit"
+      RABBITMQ_DEFAULT_PASS: "rabbit"
+    volumes:
+      - ./rabbit/enabled_plugins:/etc/rabbitmq/enabled_plugins

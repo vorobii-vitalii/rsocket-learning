@@ -1,31 +1,29 @@
 package rsocket.learning.prices.impl;
 
-import java.util.concurrent.BlockingQueue;
-
 import com.rabbitmq.stream.Message;
 import com.rabbitmq.stream.MessageHandler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Sinks;
-import rsocket.learning.prices.PriceData;
-import rsocket.learning.prices.PriceDataDeserializer;
+import rsocket.learning.serialization.Deserializer;
 
 @RequiredArgsConstructor
 @Slf4j
-public class SinkAppendingMessageHandler implements MessageHandler {
-	private final PriceDataDeserializer priceDataDeserializer;
-	private final Sinks.Many<PriceData> sink;
+public class SinkAppendingMessageHandler<T> implements MessageHandler {
+	private final Deserializer deserializer;
+	private final Sinks.Many<T> sink;
+	private final Class<T> type;
 
 	@Override
 	public void handle(Context context, Message message) {
 		try {
-			var parsedPriceData = priceDataDeserializer.deserialize(message.getBodyAsBinary());
-			log.info("Parsed price data: {}", parsedPriceData);
-			sink.tryEmitNext(parsedPriceData);
+			var parsed = deserializer.deserialize(message.getBodyAsBinary(), type);
+			log.info("Parsed {}: {}", type.getSimpleName(), parsed);
+			sink.tryEmitNext(parsed);
 		}
 		catch (Exception error) {
-			log.warn("Error occurred when parsing price data", error);
+			log.warn("Error occurred when parsing {}", type.getSimpleName(), error);
 		}
 	}
 }

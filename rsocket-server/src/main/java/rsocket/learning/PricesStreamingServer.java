@@ -14,9 +14,8 @@ import io.rsocket.transport.netty.server.TcpServerTransport;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 import rsocket.learning.prices.PriceData;
-import rsocket.learning.prices.impl.JsonPriceDataDeserializer;
+import rsocket.learning.serialization.json.JsonDeserializer;
 import rsocket.learning.prices.impl.SinkAppendingMessageHandler;
-import rsocket.learning.prices.impl.QueueReadingFluxCreator;
 import rsocket.learning.prices.impl.StockPriceReaderImpl;
 import rsocket.learning.serialization.json.JsonPayloadDataDeserializer;
 import rsocket.learning.serialization.json.JsonPayloadDataSerializer;
@@ -44,7 +43,7 @@ public class PricesStreamingServer {
 				.stream(PRICES_STREAM)
 				.offset(OffsetSpecification.next())
 				.noTrackingStrategy()
-				.messageHandler(new SinkAppendingMessageHandler(new JsonPriceDataDeserializer(gson), taskSink))
+				.messageHandler(new SinkAppendingMessageHandler<>(new JsonDeserializer(gson), taskSink, PriceData.class))
 				.build();
 
 		var pricesStream = taskSink.asFlux()

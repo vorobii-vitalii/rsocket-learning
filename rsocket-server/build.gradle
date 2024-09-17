@@ -4,7 +4,20 @@ plugins {
 }
 
 group = 'rsocket.learning'
-version = '1.0-SNAPSHOT'
+//version = '1.0-SNAPSHOT'
+archivesBaseName = 'app'
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes "Main-Class": "rsocket.learning.PricesStreamingServer"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
 
 repositories {
     mavenCentral()

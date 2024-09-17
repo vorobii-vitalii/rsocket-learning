@@ -10,10 +10,51 @@ repositories {
 }
 
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation platform('org.junit:junit-bom:5.11.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.34'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    // TODO: $lombokVersion
+
+    // Citrus
+    testImplementation "org.citrusframework:citrus-core:$citrusVersion"
+    testImplementation "org.citrusframework:citrus-junit5:$citrusVersion"
+    testImplementation "org.citrusframework:citrus-groovy:$citrusVersion"
+    testImplementation "org.citrusframework:citrus-http:$citrusVersion"
+
+    implementation 'org.springframework.integration:spring-integration-core:6.3.3'
+    implementation "org.springframework.integration:spring-integration-rsocket:6.3.3"
+
+    // Test containers
+    testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
+    testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
+    testImplementation "org.testcontainers:rabbitmq:$testContainersVersion"
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+    // Logging
+    implementation 'org.slf4j:slf4j-api:2.1.0-alpha1'
+    implementation 'ch.qos.logback:logback-classic:1.5.8'
 }
 
 test {
+    exclude '**/*'
+}
+
+tasks.register('componentTests', Test) {
+    description = 'Runs component tests'
+    group = 'verification'
+    include '**/*'
+
     useJUnitPlatform()
+    testLogging.showStandardStreams = true
+    testLogging.showStackTraces = true
+    testLogging.showExceptions = true
 }

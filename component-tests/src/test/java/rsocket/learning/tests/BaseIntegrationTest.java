@@ -16,19 +16,20 @@ import org.testcontainers.images.builder.ImageFromDockerfile;
 import org.testcontainers.utility.MountableFile;
 
 public class BaseIntegrationTest {
-	public static final int RSOCKET_PORT = 5672;
+	public static final int RSOCKET_PORT = 7878;
 	public static final Network NETWORK = Network.newNetwork();
 	public static final String PRICES_STREAM = "prices_stream";
 	private static final Logger LOGGER = LoggerFactory.getLogger(BaseIntegrationTest.class);
 	public static final RabbitMQContainer RABBIT = new RabbitMQContainer("rabbitmq:3.13-rc-management")
 			.withNetwork(NETWORK)
 			.withNetworkAliases("rabbitmq")
-			.withExposedPorts(15672)
+			.withExposedPorts(15672, 5552)
 			.withEnv(Map.of(
 //					"RABBITMQ_DEFAULT_USER", "rabbit",
 //					"RABBITMQ_DEFAULT_PASS", "rabbit",
-					"RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS", "-rabbitmq_stream advertised_host localhost"
+//					"RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS", "-rabbitmq_stream advertised_host localhost"
 			))
+			.withQueue(PRICES_STREAM, false, true, Map.of("x-queue-type", "stream"))
 			.withCopyFileToContainer(MountableFile.forClasspathResource("enabled_plugins"), "/etc/rabbitmq/enabled_plugins")
 			.withLogConsumer(new Slf4jLogConsumer(LOGGER).withPrefix("rabbitmq"));
 	public static final GenericContainer<?> PRICES_SERVICE = new GenericContainer<>(
@@ -46,13 +47,6 @@ public class BaseIntegrationTest {
 
 	static {
 		RABBIT.start();
-		try {
-			LOGGER.info("Exec code = {}",
-					RABBIT.execInContainer("rabbitmqadmin declare queue name=%s arguments='{\"x-queue-type\": \"stream\"}'".formatted(PRICES_STREAM)).getExitCode());
-		}
-		catch (IOException | InterruptedException e) {
-			throw new RuntimeException(e);
-		}
 		PRICES_SERVICE.start();
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			RABBIT.stop();

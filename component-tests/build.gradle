@@ -30,6 +30,12 @@ dependencies {
 
     implementation 'org.springframework.integration:spring-integration-core:6.3.3'
     implementation "org.springframework.integration:spring-integration-rsocket:6.3.3"
+    implementation "org.springframework.integration:spring-integration-amqp:6.3.3"
+    implementation 'com.rabbitmq:stream-client:0.17.0'
+    implementation 'org.springframework.amqp:spring-amqp:3.1.6'
+    implementation 'org.springframework.amqp:spring-rabbit:3.1.6'
+    implementation 'org.springframework.amqp:spring-rabbit-stream:3.1.6'
+
 
     // Test containers
     testImplementation "org.testcontainers:testcontainers:$testContainersVersion"

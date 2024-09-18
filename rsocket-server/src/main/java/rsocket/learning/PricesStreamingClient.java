@@ -33,7 +33,7 @@ public class PricesStreamingClient {
 		RSocket clientRSocket =
 				RSocketConnector.create()
 						.payloadDecoder(PayloadDecoder.ZERO_COPY)
-						.connect(TcpClientTransport.create(7878))
+						.connect(TcpClientTransport.create(32770))
 						.block();
 
 		var pricesStreamRequest = PricesStreamRequest.builder().symbol("ABBN").build();

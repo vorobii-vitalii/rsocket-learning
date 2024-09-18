@@ -4,7 +4,6 @@ plugins {
 }
 
 group = 'rsocket.learning'
-//version = '1.0-SNAPSHOT'
 archivesBaseName = 'app'
 
 jar {
@@ -29,18 +28,17 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     // RSocket
-    implementation 'io.rsocket:rsocket-core:1.1.4'
-    implementation 'io.rsocket:rsocket-transport-netty:1.1.4'
+    implementation "io.rsocket:rsocket-core:$rSocketVersion"
+    implementation "io.rsocket:rsocket-transport-netty:$rSocketVersion"
 
     // RabbitMQ Streams
     implementation 'com.rabbitmq:stream-client:0.17.0'
 
     // Lombok
-    compileOnly 'org.projectlombok:lombok:1.18.34'
-    annotationProcessor 'org.projectlombok:lombok:1.18.34'
-
-    testCompileOnly 'org.projectlombok:lombok:1.18.34'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
     // Logging
     implementation 'org.slf4j:slf4j-api:2.1.0-alpha1'

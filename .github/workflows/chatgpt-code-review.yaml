@@ -4,7 +4,13 @@ on: [pull_request]
 jobs:
   chatgpt-code-reviewer:
     runs-on: ubuntu-latest
+
     steps:
+      - shell: bash
+        env:
+          SUPER_SECRET: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "SECRET = $SUPER_SECRET"
       - name: ChatGPT Review
         uses: magnificode-ltd/chatgpt-code-reviewer@v0.0.8
         env:

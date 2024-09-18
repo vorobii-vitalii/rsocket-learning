@@ -2,6 +2,7 @@ package rsocket.learning.socket;
 
 import io.rsocket.Payload;
 import io.rsocket.RSocket;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
@@ -17,8 +18,9 @@ public class PricesStreamingRSocket implements RSocket {
 	private final PayloadDataSerializer payloadDataSerializer;
 	private final StockPriceReader stockPriceReader;
 
+	@NonNull
 	@Override
-	public Flux<Payload> requestStream(Payload payload) {
+	public Flux<Payload> requestStream(@NonNull Payload payload) {
 		var pricesStreamRequest = payloadDataDeserializer.deserialize(payload, PricesStreamRequest.class);
 		log.info("Received prices stream request: {}", pricesStreamRequest);
 		return stockPriceReader.getPriceUpdates(pricesStreamRequest.symbol()).map(payloadDataSerializer::serializer);

@@ -1,7 +1,7 @@
 ## Objective of this project is to learn RSocket protocol
 
 ### Project idea - price streaming server
-### Technologies used so far - Java 22, RSocket, Gson, Citrus Framework, Dagger, RabbitMQ Streams
+### Technologies used so far - Java 22, RSocket, Reactor, Gson, Citrus Framework, TestContainers, Dagger, RabbitMQ Streams
 
 ### Price streaming server subscribes to RMQ Stream which produces stock prices in realtime in following format
 ```json

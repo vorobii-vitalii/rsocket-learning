@@ -36,9 +36,9 @@ public class IntegrationTest extends BaseIntegrationTest {
 	Endpoint pricesStreamWriteEndpoint;
 
 	@Test
-	void test(@CitrusResource TestActionRunner actions) {
-		log.info("endpoint = {}", rSocketRequestEndpoint);
+	void verifyOnlyRelevantPriceUpdatesArePropagatedThroughRSocketStream(@CitrusResource TestActionRunner actions) {
 
+		// Connect to RSocket server
 		actions.$(send(rSocketRequestEndpoint).message(new DefaultMessage().setPayload("{\"symbol\": \"ABBN\"}")));
 
 		var timestamp1 = DATE_TIME_FORMATTER.format(LocalDateTime.now());

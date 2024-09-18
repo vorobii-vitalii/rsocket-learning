@@ -9,7 +9,6 @@ import org.citrusframework.endpoint.direct.DirectEndpointBuilder;
 import org.citrusframework.message.DefaultMessage;
 import org.citrusframework.message.DefaultMessageQueue;
 import org.citrusframework.message.MessageQueue;
-import org.reactivestreams.Subscription;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.ServiceActivator;
@@ -21,16 +20,16 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
 import lombok.extern.slf4j.Slf4j;
-import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Flux;
 
 @Configuration
 @Slf4j
 public class RSocketEndpointConfig {
+	private static final String LOOPBACK = "127.0.0.1";
 
 	@Bean
 	public ClientRSocketConnector clientRSocketConnector() {
-		ClientRSocketConnector clientRSocketConnector = new ClientRSocketConnector("127.0.0.1", PRICES_SERVICE.getMappedPort(RSOCKET_PORT));
+		ClientRSocketConnector clientRSocketConnector = new ClientRSocketConnector(LOOPBACK, PRICES_SERVICE.getMappedPort(RSOCKET_PORT));
 		clientRSocketConnector.setAutoStartup(false);
 		return clientRSocketConnector;
 	}
@@ -75,34 +74,10 @@ public class RSocketEndpointConfig {
 	@ServiceActivator(inputChannel = "responseChannel")
 	public MessageHandler responseChannelHandler(MessageQueue responsesQueue) {
 		return message -> {
-			log.info("Response = {}", message);
 			@SuppressWarnings("unchecked")
 			Flux<String> fluxMap = (Flux<String>) message.getPayload();
-			fluxMap.subscribe(new CoreSubscriber<>() {
-				@Override
-				public void onSubscribe(Subscription subscription) {
-					subscription.request(Long.MAX_VALUE);
-				}
-
-				@Override
-				public void onNext(String v) {
-					log.info("Adding {} to queue", v);
-					responsesQueue.send(new DefaultMessage(v));
-				}
-
-				@Override
-				public void onError(Throwable throwable) {
-					log.error("Error", throwable);
-				}
-
-				@Override
-				public void onComplete() {
-
-				}
-			});
+			fluxMap.subscribe(v -> responsesQueue.send(new DefaultMessage(v)));
 		};
 	}
-
-
 
 }

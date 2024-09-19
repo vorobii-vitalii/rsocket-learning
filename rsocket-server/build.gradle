@@ -1,0 +1,65 @@
+plugins {
+    id 'java'
+    id "io.spring.dependency-management" version "1.0.7.RELEASE"
+}
+
+group = 'rsocket.learning'
+archivesBaseName = 'app'
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes "Main-Class": "rsocket.learning.PricesStreamingServer"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.11.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // RSocket
+    implementation "io.rsocket:rsocket-core:$rSocketVersion"
+    implementation "io.rsocket:rsocket-transport-netty:$rSocketVersion"
+
+    // RabbitMQ Streams
+    implementation 'com.rabbitmq:stream-client:0.17.0'
+
+    // Lombok
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    // Logging
+    implementation 'org.slf4j:slf4j-api:2.1.0-alpha1'
+    implementation 'ch.qos.logback:logback-classic:1.5.8'
+
+    // Json lib
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+    // Dagger
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
+
+    // Unit tests
+    testImplementation 'org.assertj:assertj-core:3.26.3'
+    testImplementation 'org.mockito:mockito-core:5.13.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.13.0'
+    testImplementation 'io.projectreactor:reactor-test:3.6.10'
+
+}
+
+test {
+    useJUnitPlatform()
+    testLogging.showStandardStreams = true
+}

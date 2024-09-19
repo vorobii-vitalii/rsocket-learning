@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+}
+
+group = 'rsocket.learning'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.11.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // Lombok
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    // Citrus
+    testImplementation "org.citrusframework:citrus-core:$citrusVersion"
+    testImplementation "org.citrusframework:citrus-junit5:$citrusVersion"
+    testImplementation "org.citrusframework:citrus-groovy:$citrusVersion"
+    testImplementation "org.citrusframework:citrus-http:$citrusVersion"
+
+    implementation "org.springframework.integration:spring-integration-core:$springIntegrationVersion"
+    implementation "org.springframework.integration:spring-integration-rsocket:$springIntegrationVersion"
+    implementation "org.springframework.integration:spring-integration-amqp:$springIntegrationVersion"
+    implementation "com.rabbitmq:stream-client:0.17.0"
+    implementation "org.springframework.amqp:spring-amqp:$springAmqpVersion"
+    implementation "org.springframework.amqp:spring-rabbit:$springAmqpVersion"
+    implementation "org.springframework.amqp:spring-rabbit-stream:$springAmqpVersion"
+
+
+    // Test containers
+    testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
+    testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
+    testImplementation "org.testcontainers:rabbitmq:$testContainersVersion"
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+    // Logging
+    implementation 'org.slf4j:slf4j-api:2.1.0-alpha1'
+    implementation 'ch.qos.logback:logback-classic:1.5.8'
+}
+
+test {
+    exclude '**/*'
+}
+
+tasks.register('componentTests', Test) {
+    description = 'Runs component tests'
+    group = 'verification'
+    include '**/*'
+
+    useJUnitPlatform()
+    testLogging.showStandardStreams = true
+    testLogging.showStackTraces = true
+    testLogging.showExceptions = true
+}

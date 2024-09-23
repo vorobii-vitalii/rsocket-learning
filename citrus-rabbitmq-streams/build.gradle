@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+}
+
+group = 'rsocket.learning'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // RabbitMQ Streams
+    implementation 'com.rabbitmq:stream-client:0.17.0'
+
+    // Lombok
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    // Citrus
+    implementation "org.citrusframework:citrus-core:$citrusVersion"
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.11.0'
+
+    // Logging
+    implementation 'org.slf4j:slf4j-api:2.1.0-alpha1'
+    implementation 'ch.qos.logback:logback-classic:1.5.8'
+}
+
+test {
+    useJUnitPlatform()
+}

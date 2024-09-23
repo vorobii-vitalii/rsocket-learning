@@ -10,13 +10,16 @@ import org.citrusframework.TestActionRunner;
 import org.citrusframework.annotations.CitrusEndpoint;
 import org.citrusframework.annotations.CitrusResource;
 import org.citrusframework.config.CitrusSpringConfig;
-import org.citrusframework.endpoint.Endpoint;
 import org.citrusframework.junit.jupiter.spring.CitrusSpringSupport;
 import org.citrusframework.message.DefaultMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import citrus.rabbitmq.streams.RabbitMQStreamsEndpoint;
+import citrus.rsocket.RSocketEndpoint;
+import citrus.rsocket.RSocketRequest;
+import citrus.rsocket.RSocketRequestType;
 import lombok.extern.slf4j.Slf4j;
 
 @Testcontainers
@@ -26,20 +29,17 @@ import lombok.extern.slf4j.Slf4j;
 public class IntegrationTest extends BaseIntegrationTest {
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
-	@CitrusEndpoint(name = "rSocketRequestEndpoint")
-	Endpoint rSocketRequestEndpoint;
+	@CitrusEndpoint(name = "RSocketEndpoint")
+	RSocketEndpoint rSocketEndpoint;
 
-	@CitrusEndpoint(name = "rSocketResponseEndpoint")
-	Endpoint rSocketResponseEndpoint;
-
-	@CitrusEndpoint(name = "pricesStreamWriteEndpoint")
-	Endpoint pricesStreamWriteEndpoint;
+	@CitrusEndpoint(name = "rabbitMQStreamsEndpoint")
+	RabbitMQStreamsEndpoint pricesStreamWriteEndpoint;
 
 	@Test
 	void verifyOnlyRelevantPriceUpdatesArePropagatedThroughRSocketStream(@CitrusResource TestActionRunner actions) {
 
 		// Connect to RSocket server
-		actions.$(send(rSocketRequestEndpoint).message(new DefaultMessage().setPayload("{\"symbol\": \"ABBN\"}")));
+		actions.$(send(rSocketEndpoint).message(new RSocketRequest("{\"symbol\": \"ABBN\"}", RSocketRequestType.REQUEST_STREAM)));
 
 		var timestamp1 = DATE_TIME_FORMATTER.format(LocalDateTime.now());
 		var timestamp2 = DATE_TIME_FORMATTER.format(LocalDateTime.now());
@@ -70,7 +70,7 @@ public class IntegrationTest extends BaseIntegrationTest {
 				}
 				""".formatted(timestamp3))));
 
-		actions.$(receive(rSocketResponseEndpoint)
+		actions.$(receive(rSocketEndpoint)
 				.message(new DefaultMessage().setPayload("""
 						{
 							"askPrice": 100.0,
@@ -78,7 +78,7 @@ public class IntegrationTest extends BaseIntegrationTest {
 							"timestamp": "%s"
 						}
 						""".formatted(timestamp2))));
-		actions.$(receive(rSocketResponseEndpoint)
+		actions.$(receive(rSocketEndpoint)
 				.message(new DefaultMessage().setPayload("""
 						{
 							"askPrice": 102.0,

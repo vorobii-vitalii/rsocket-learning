@@ -1,4 +1,6 @@
 rootProject.name = 'rsocket-learning'
 include 'rsocket-server'
 include 'component-tests'
+include 'citrus-rsocket'
+include 'citrus-rabbitmq-streams'
 
